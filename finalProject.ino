@@ -28,7 +28,6 @@ byte prevKeyState = HIGH;       // button is active low
 //called when button is pressed for less than 2 seconds
 void shortKeyPress() {
     Serial.println("short");
-    digitalWrite(led1, HIGH);
     digitalWrite(led2, HIGH);
     digitalWrite(valve, HIGH);
     logic();
@@ -63,11 +62,11 @@ void keyRelease() {
 void logic(){
     Serial.println("Logic Script");
     pressure = analogRead(pressureTransducer);
-    digitalWrite(led1, LOW);
     while(pressure < 10){
         pressure = analogRead(pressureTransducer);
     }
     if(pressure >= 10) {
+        digitalWrite(led1, HIGH);
         timer();
     }
 }
@@ -75,6 +74,8 @@ void logic(){
 void timer(){
     Serial.println("Timer Script");
     prev = millis();
+    delay(10);
+    digitalWrite(led1, LOW);
 
     while(millis() - prev <= interval){
         pressureVal = analogRead(pressureTransducer);
@@ -130,5 +131,6 @@ void loop(){
     }
 
     prevKeyState = currKeyState;
+    digitalWrite(valve, LOW);
   }
 }

@@ -29,7 +29,8 @@ byte prevKeyState = HIGH;       // button is active low
 void shortKeyPress() {
     Serial.println("short");
     digitalWrite(led1, HIGH);
-    digitalWrite(valve, HIGH);                                          // new changes
+    digitalWrite(led2, HIGH);
+    digitalWrite(valve, HIGH);
     logic();
 }
 
@@ -62,6 +63,7 @@ void keyRelease() {
 void logic(){
     Serial.println("Logic Script");
     pressure = analogRead(pressureTransducer);
+    digitalWrite(led1, LOW);
     while(pressure < 10){
         pressure = analogRead(pressureTransducer);
     }
@@ -72,10 +74,7 @@ void logic(){
 
 void timer(){
     Serial.println("Timer Script");
-    digitalWrite(led1, LOW);
-    digitalWrite(led2, HIGH);
     prev = millis();
-    //digitalWrite(valve, HIGH);                                        //new changes
 
     while(millis() - prev <= interval){
         pressureVal = analogRead(pressureTransducer);
@@ -88,6 +87,7 @@ void timer(){
 
 void calibration(){
     Serial.println("Calibration Script");
+    digitalWrite(valve,HIGH);
     while(1){
         pressureVal = analogRead(pressureTransducer)*4;
         dac.setVoltage(pressureVal, false);
@@ -106,10 +106,12 @@ void setup(){
     pinMode(pressureTransducer, INPUT);
     pinMode(led1, OUTPUT);
     pinMode(led2, OUTPUT);
+
+    digitalWrite(valve, LOW);
 }
 
 void loop(){
-    delay(10);
+    delay(5);
 
     //key management section
     if(millis() - keyPrevMillis >= keyIntervalMs){
